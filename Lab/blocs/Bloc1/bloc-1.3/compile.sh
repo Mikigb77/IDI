@@ -1,5 +1,5 @@
 #!/bin/bash
 
-'qmake-qt5'
+'qmake'
 'make'
 './Bloc1_Exemple'

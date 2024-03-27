@@ -1,7 +1,7 @@
 TEMPLATE    = app
 QT         += opengl 
 
-INCLUDEPATH +=  /usr/include/glm
+INCLUDEPATH +=  /home/kali/Desktop/upc/idi/IDI/Dependencies/
 
 FORMS += MyForm.ui
 
