@@ -236,12 +236,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
     case Qt::Key_R:
-    {
+    { // rotar el model 45 graus
         rotation += M_PI / 4;
         break;
     }
     case Qt::Key_O:
-    {
+    { // activa/desactiva la camera ortogonal
         orthogonal = !orthogonal;
         projectTransform();
         break;
