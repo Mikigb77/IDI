@@ -41,6 +41,15 @@ protected:
   // updates the camera from the sphere containg the scene
   virtual void updateCamera();
 
+  // capture the mouse movement event
+  virtual void mouseMoveEvent(QMouseEvent *e) override;
+
+  // capture mouse button press event
+  virtual void mousePressEvent(QMouseEvent *e) override;
+
+  // capture mouse button relesse event
+  virtual void mouseReleaseEvent(QMouseEvent *e) override;
+
   Model model;
 
   GLfloat FOV, ra, znear, zfar;
@@ -61,6 +70,8 @@ protected:
   GLuint VAO_Floor;
 
   GLfloat pitch, yaw, roll;
+  QPoint mousePosition;
+  GLboolean mouseLeftButtonPressed;
 
   GLuint projLoc;
   GLuint viewLoc;

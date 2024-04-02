@@ -63,6 +63,8 @@ void MyGLWidget::initializeGL()
     maxCoordenates = glm::vec3(-INFINITY);
     targetHeigth = 4;
     pitch = roll = yaw = 0.f; // initial angle for rotation
+    mouseLeftButtonPressed = false;
+    mousePosition = QPoint();
 
     // default initialization foor the openGL + call to creaBuffers
     BL2GLWidget::initializeGL();
@@ -168,6 +170,52 @@ void MyGLWidget::updateCamera()
     viewTransform();
 }
 
+void MyGLWidget::mouseMoveEvent(QMouseEvent *e)
+{
+
+    if (e->type() != QEvent::MouseMove)
+        return;
+    if (mouseLeftButtonPressed)
+    {
+        makeCurrent();
+        QPoint currPos = e->pos();
+
+        int deltaX = currPos.x() - mousePosition.x();
+        int deltaY = currPos.y() - mousePosition.y();
+
+        float sensitivity = 0.03;
+        float h = float(QOpenGLWidget::height());
+        float w = float(QOpenGLWidget::width());
+        pitch += sensitivity * (deltaY / h) * 180;
+        yaw -= sensitivity * (deltaX / w) * 180;
+
+        viewTransform();
+        update();
+    }
+}
+
+void MyGLWidget::mousePressEvent(QMouseEvent *e)
+{
+    if (e->type() != QEvent::MouseButtonPress)
+        return;
+    if (e->button() == Qt::LeftButton)
+    {
+        mouseLeftButtonPressed = true;
+        mousePosition = e->pos();
+    }
+}
+
+void MyGLWidget::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (e->type() != QEvent::MouseButtonRelease)
+        return;
+    if (e->button() == Qt::LeftButton)
+    {
+        mouseLeftButtonPressed = false;
+        mousePosition = QPoint();
+    }
+}
+
 void MyGLWidget::projectTransform()
 {
     glm::mat4 Proj;
@@ -180,9 +228,12 @@ void MyGLWidget::projectTransform()
 
 void MyGLWidget::viewTransform()
 {
-    glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    // glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    glm::mat4 View = glm::mat4(1);
+    View = glm::translate(View, glm::vec3(0, 0, -OBS.z));
     View = glm::rotate(View, glm::radians(pitch), glm::vec3(1, 0, 0));
-    View = glm::rotate(View, glm::radians(yaw), glm::vec3(0, 1, 0));
+    View = glm::rotate(View, glm::radians(-yaw), glm::vec3(0, 1, 0));
+    View = glm::translate(View, -VRP); // to allways have the view centered
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
 }
 
@@ -238,6 +289,16 @@ void MyGLWidget::keyPressEvent(QKeyEvent *event)
         escala -= 0.05;
         break;
     }
+    case Qt::Key_F:
+    { // escalar a més gran
+        FOV += 0.05;
+        break;
+    }
+    case Qt::Key_G:
+    { // escalar a més petit
+        FOV -= 0.05;
+        break;
+    }
     case Qt::Key_R:
     { // rotar el model 45 graus
         rotation += M_PI / 4;
@@ -273,7 +334,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent *event)
         event->ignore();
         break;
     }
-    updateCamera();
+    viewTransform();
+    projectTransform();
     update();
 }
 
