@@ -60,6 +60,8 @@ protected:
   GLuint VAO_Homer;
   GLuint VAO_Floor;
 
+  GLfloat pitch, yaw, roll;
+
   GLuint projLoc;
   GLuint viewLoc;
 };

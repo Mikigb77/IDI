@@ -62,6 +62,7 @@ void MyGLWidget::initializeGL()
     minCoordenates = glm::vec3(INFINITY);
     maxCoordenates = glm::vec3(-INFINITY);
     targetHeigth = 4;
+    pitch = roll = yaw = 0.f; // initial angle for rotation
 
     // default initialization foor the openGL + call to creaBuffers
     BL2GLWidget::initializeGL();
@@ -180,6 +181,8 @@ void MyGLWidget::projectTransform()
 void MyGLWidget::viewTransform()
 {
     glm::mat4 View = glm::lookAt(OBS, VRP, UP);
+    View = glm::rotate(View, glm::radians(pitch), glm::vec3(1, 0, 0));
+    View = glm::rotate(View, glm::radians(yaw), glm::vec3(0, 1, 0));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &View[0][0]);
 }
 
@@ -246,10 +249,31 @@ void MyGLWidget::keyPressEvent(QKeyEvent *event)
         projectTransform();
         break;
     }
+    case Qt::Key_Up:
+    {
+        pitch += 5;
+        break;
+    }
+    case Qt::Key_Down:
+    {
+        pitch -= 5;
+        break;
+    }
+    case Qt::Key_Left:
+    {
+        yaw -= 5;
+        break;
+    }
+    case Qt::Key_Right:
+    {
+        yaw += 5;
+        break;
+    }
     default:
         event->ignore();
         break;
     }
+    updateCamera();
     update();
 }
 
